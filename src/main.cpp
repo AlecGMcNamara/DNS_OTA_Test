@@ -27,18 +27,19 @@ void setup(void) {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
+  // load OTA page automatically
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-    request->send(200, "text/plain", "Hi! I am ESP32. using mDNS!");
+    request->send(200, "text/html", 
+      "<script type='text/javascript'>"
+      "window.location.href = 'http://ota_dns_test.local/update'"
+      "</script>"   );
   });
 
   if(!MDNS.begin("OTA_DNS_Test")) {
      Serial.println("Error starting mDNS");
      return;
   }
-  else { 
-    Serial.println("Started mDNS"); 
-    }
-
+  
   AsyncElegantOTA.begin(&server);    // Start ElegantOTA
   server.begin();
   Serial.println("HTTP server started.");
